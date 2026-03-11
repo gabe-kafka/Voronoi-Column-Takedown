@@ -1,0 +1,9 @@
+.git
+.gitignore
+.venv
+__pycache__/
+*.pyc
+jobs/
+column_load_takedown.xlsx
+tributary_output_fixed.dxf
+~$*.xlsx

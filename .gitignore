@@ -1,0 +1,43 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# AutoCAD temporary files
+*.dwl
+*.dwl2
+*.bak
+*~
+
+# System files
+.DS_Store
+.vscode/
+.claude/
+.kiro/
+
+# Project inputs and generated artifacts
+INPUT.DXF
+input.dxf
+dxf_*.csv
+column_load_takedown.xlsx
+readme 2.txt
+tributary_output.dxf
+tributary_output_fixed.dxf
+\#tributary_output.dxf
+\#tributary_output_fixed.dxf
+
+# Excel temporary files
+~$*.xlsx
+
+# Web job artifacts
+jobs/
