@@ -7,6 +7,31 @@ import numpy as np
 # Conversion factor
 INCHES_TO_FEET = 1/12
 
+
+def extract_entity_text(entity):
+    """Return user-visible text for DXF TEXT/MTEXT entities."""
+    raw_text = ""
+
+    if hasattr(entity, "plain_text"):
+        try:
+            raw_text = entity.plain_text()
+        except TypeError:
+            raw_text = entity.plain_text
+        except Exception:
+            raw_text = ""
+
+    if not raw_text:
+        if entity.dxftype() == "TEXT":
+            raw_text = getattr(entity.dxf, "text", "")
+        else:
+            raw_text = getattr(entity, "text", "")
+
+    if raw_text is None:
+        return ""
+
+    normalized_lines = [line.strip() for line in str(raw_text).replace("\\P", "\n").splitlines()]
+    return " ".join(line for line in normalized_lines if line)
+
 # Input filename expected to be dropped next to the scripts
 INPUT_DXF = Path("INPUT.DXF")
 if not INPUT_DXF.exists():
@@ -30,7 +55,7 @@ for e in msp:
     if e.dxftype() == "MTEXT" and layer == "COLUMN NUMBER":
         try:
             # Extract text content and coordinates
-            label_text = e.text
+            label_text = extract_entity_text(e)
             insert_point = e.dxf.insert
             
             # Convert coordinates from inches to feet
@@ -38,11 +63,12 @@ for e in msp:
             y_feet = insert_point.y * INCHES_TO_FEET
             
             # Store column label data
-            column_labels.append({
-                'label': label_text,
-                'x': x_feet,
-                'y': y_feet
-            })
+            if label_text:
+                column_labels.append({
+                    'label': label_text,
+                    'x': x_feet,
+                    'y': y_feet
+                })
         except AttributeError as ex:
             # Handle malformed entities
             print(f"Warning: Skipping malformed MTEXT entity - {ex}")
@@ -54,7 +80,7 @@ for e in msp:
     elif e.dxftype() == "MTEXT" and layer == "FLOOR NUMBER":
         try:
             # Extract text content and coordinates
-            floor_text = e.text
+            floor_text = extract_entity_text(e)
             insert_point = e.dxf.insert
             
             # Convert coordinates from inches to feet
@@ -62,11 +88,12 @@ for e in msp:
             y_feet = insert_point.y * INCHES_TO_FEET
             
             # Store floor number data
-            floor_numbers.append({
-                'floor_number': floor_text,
-                'x': x_feet,
-                'y': y_feet
-            })
+            if floor_text:
+                floor_numbers.append({
+                    'floor_number': floor_text,
+                    'x': x_feet,
+                    'y': y_feet
+                })
         except AttributeError as ex:
             # Handle malformed entities
             print(f"Warning: Skipping malformed FLOOR NUMBER MTEXT entity - {ex}")
@@ -78,7 +105,7 @@ for e in msp:
     elif e.dxftype() == "TEXT" and layer == "FLOOR NUMBER":
         try:
             # Extract text content and coordinates
-            floor_text = e.dxf.text
+            floor_text = extract_entity_text(e)
             insert_point = e.dxf.insert
             
             # Convert coordinates from inches to feet
@@ -86,11 +113,12 @@ for e in msp:
             y_feet = insert_point.y * INCHES_TO_FEET
             
             # Store floor number data
-            floor_numbers.append({
-                'floor_number': floor_text,
-                'x': x_feet,
-                'y': y_feet
-            })
+            if floor_text:
+                floor_numbers.append({
+                    'floor_number': floor_text,
+                    'x': x_feet,
+                    'y': y_feet
+                })
         except AttributeError as ex:
             # Handle malformed entities
             print(f"Warning: Skipping malformed FLOOR NUMBER TEXT entity - {ex}")

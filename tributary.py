@@ -224,6 +224,11 @@ def normalize_column_label_text(label):
         label = str(label)
     
     raw_text = label.strip()
+    raw_text = raw_text.replace("\\P", " ").replace("\\~", " ")
+    raw_text = re.sub(r"\{\\[^;]*;([^}]*)\}", r"\1", raw_text)
+    raw_text = re.sub(r"\\[A-Za-z][^;]*;", "", raw_text)
+    raw_text = raw_text.replace("{", "").replace("}", "")
+    raw_text = " ".join(raw_text.split())
     if raw_text.lower() == 'nan':
         raw_text = ''
     if not raw_text:
